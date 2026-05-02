@@ -46,6 +46,9 @@ sc_input_manager_init(struct sc_input_manager *im,
     im->key_repeat = 0;
 
     im->next_sequence = 1; // 0 is reserved for SC_SEQUENCE_INVALID
+    
+    // Initialize touch converter for game UI improvements
+    sc_touch_converter_init(&im->touch_converter);
 }
 
 static void
