@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "controller.h"
+#include "touch_converter.h"
 #include "trait/mouse_processor.h"
 
 struct sc_mouse_sdk {
@@ -13,6 +14,9 @@ struct sc_mouse_sdk {
 
     struct sc_controller *controller;
     bool mouse_hover;
+    
+    // Touch converter for game compatibility
+    struct sc_touch_converter touch_converter;
 };
 
 void
