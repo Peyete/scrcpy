@@ -11,6 +11,7 @@
 #include "controller.h"
 #include "file_pusher.h"
 #include "options.h"
+#include "touch_converter.h"
 #include "trait/gamepad_processor.h"
 #include "trait/key_processor.h"
 #include "trait/mouse_processor.h"
@@ -44,6 +45,9 @@ struct sc_input_manager {
     uint16_t last_mod;
 
     uint64_t next_sequence; // used for request acknowledgements
+    
+    // Touch converter for game UI improvements
+    struct sc_touch_converter touch_converter;
 };
 
 struct sc_input_manager_params {
