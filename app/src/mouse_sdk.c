@@ -65,6 +65,11 @@ sc_mouse_processor_process_mouse_motion(struct sc_mouse_processor *mp,
         return;
     }
 
+    // Use touch converter to improve game compatibility
+    struct sc_point touch_position;
+    bool should_send_touch_event = sc_touch_converter_process_mouse_motion(
+        &m->touch_converter, event, &touch_position);
+
     struct sc_control_msg msg = {
         .type = SC_CONTROL_MSG_TYPE_INJECT_TOUCH_EVENT,
         .inject_touch_event = {
@@ -86,6 +91,13 @@ static void
 sc_mouse_processor_process_mouse_click(struct sc_mouse_processor *mp,
                                     const struct sc_mouse_click_event *event) {
     struct sc_mouse_sdk *m = DOWNCAST(mp);
+
+    // Track mouse down/up for touch converter
+    if (event->action == SC_ACTION_DOWN) {
+        sc_touch_converter_on_mouse_down(&m->touch_converter, &event->position.point);
+    } else {
+        sc_touch_converter_on_mouse_up(&m->touch_converter);
+    }
 
     struct sc_control_msg msg = {
         .type = SC_CONTROL_MSG_TYPE_INJECT_TOUCH_EVENT,
@@ -150,6 +162,9 @@ sc_mouse_sdk_init(struct sc_mouse_sdk *m, struct sc_controller *controller,
                   bool mouse_hover) {
     m->controller = controller;
     m->mouse_hover = mouse_hover;
+    
+    // Initialize touch converter for game UI improvements
+    sc_touch_converter_init(&m->touch_converter);
 
     static const struct sc_mouse_processor_ops ops = {
         .process_mouse_motion = sc_mouse_processor_process_mouse_motion,
